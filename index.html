@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonathan Lew — Absanet</title>
+  <!--
+    FOTO: Guardá tu foto en la misma carpeta que este archivo con el nombre "foto.jpg"
+    Si no hay foto, se muestra un avatar con las iniciales JL automáticamente.
+  -->
+  <style>
+    :root {
+      --blue-dark:  #0d2f5e;
+      --blue-mid:   #1a6fc4;
+      --blue-light: #4db5ff;
+      --cyan:       #00c8e0;
+      --bg:         #edf4fb;
+      --card-bg:    #ffffff;
+      --text-dark:  #0d1f3c;
+      --text-mid:   #4a5f7a;
+      --text-light: #8aa0bc;
+      --border:     #ddeaf7;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 0%, #cfe8fa 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, #d4eaf7 0%, transparent 60%),
+        linear-gradient(rgba(26,111,196,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,111,196,.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: 28px;
+      box-shadow:
+        0 2px 4px rgba(13,47,94,.04),
+        0 8px 24px rgba(13,47,94,.10),
+        0 24px 64px rgba(13,47,94,.14);
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── HEADER ── */
+    .card-header {
+      background: linear-gradient(145deg, var(--blue-dark) 0%, var(--blue-mid) 65%, var(--cyan) 100%);
+      padding: 36px 28px 72px;
+      text-align: center;
+      position: relative;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 56px;
+      background: var(--card-bg);
+      border-radius: 56% 56% 0 0 / 100% 100% 0 0;
+    }
+
+    /* Subtle circuit-board dots */
+    .card-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+
+    .lang-btn {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.30);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background .2s;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,.25); }
+
+    /* ── PHOTO ── */
+    .photo-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 14px;
+      z-index: 1;
+    }
+
+    .photo,
+    .avatar {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      box-shadow: 0 6px 20px rgba(0,0,0,.22);
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .avatar {
+      background: linear-gradient(135deg, #4db5ff, #00c8e0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+
+    .status-dot {
+      width: 16px; height: 16px;
+      background: #22d17a;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 5px; right: 5px;
+    }
+
+    .h-name {
+      color: #fff;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+      position: relative; z-index: 1;
+    }
+
+    .h-role {
+      color: rgba(255,255,255,.80);
+      font-size: 13px;
+      font-weight: 500;
+      position: relative; z-index: 1;
+    }
+
+    .h-role strong { color: var(--cyan); font-weight: 700; }
+
+    /* ── BODY ── */
+    .card-body { padding: 20px 28px 32px; }
+
+    .tagline {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--blue-mid);
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bio {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-mid);
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 10px;
+    }
+
+    /* ── SERVICES ── */
+    .services {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+
+    .svc {
+      background: #f3f8fe;
+      border-radius: 12px;
+      padding: 11px 13px;
+      border-left: 3px solid var(--blue-mid);
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .svc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(26,111,196,.13);
+    }
+
+    .svc.wide { grid-column: 1 / -1; }
+
+    .svc-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 3px;
+    }
+
+    .svc-desc {
+      font-size: 11px;
+      color: var(--text-mid);
+      line-height: 1.45;
+    }
+
+    /* ── BUTTONS ── */
+    .btns { display: flex; gap: 10px; }
+
+    .btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 13px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: transform .18s, box-shadow .18s, background .18s;
+      line-height: 1;
+    }
+
+    .btn-email {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(26,111,196,.30);
+    }
+    .btn-email:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26,111,196,.40);
+    }
+
+    .btn-li {
+      background: #fff;
+      color: var(--blue-mid);
+      border: 2px solid var(--border);
+    }
+    .btn-li:hover {
+      background: #f3f8fe;
+      border-color: var(--blue-mid);
+      transform: translateY(-2px);
+    }
+
+    svg.ico { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--blue-dark);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 6px 24px rgba(0,0,0,.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── LANG HIDDEN ── */
+    [data-lang] { display: none; }
+    .es-show [data-lang="es"],
+    .en-show [data-lang="en"] { display: inline; }
+    .es-show [data-lang-block="es"],
+    .en-show [data-lang-block="en"] { display: block; }
+
+    @media (max-width: 480px) {
+      .card { border-radius: 20px; }
+      .card-header { padding: 28px 20px 60px; }
+      .card-body { padding: 16px 20px 26px; }
+    }
+  </style>
+</head>
+<body class="es-show">
+
+<div class="card">
+
+  <!-- ── HEADER ── -->
+  <div class="card-header">
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+
+    <div class="photo-wrap">
+      <img class="photo" src="foto.jpg" alt="Jonathan Lew"
+           onerror="this.style.display='none';document.getElementById('av').style.display='flex';">
+      <div class="avatar" id="av" style="display:none;">JL</div>
+      <div class="status-dot"></div>
+    </div>
+
+    <div class="h-name">Jonathan Lew</div>
+    <div class="h-role">CEO &amp; Co-founder · <strong>Absanet</strong></div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="card-body">
+
+    <div class="tagline">
+      <span data-lang="es">Insurtech con ADN de Seguros</span>
+      <span data-lang="en">Insurtech with Insurance DNA</span>
+    </div>
+
+    <p class="bio">
+      <span data-lang-block="es">
+        +25 años en seguros. Cofundador de Absanet.<br>
+        Lic. en Administración (UBA) · MBA (UDESA).<br>
+        Conecto negocio y tecnología para transformar<br>la industria aseguradora.
+      </span>
+      <span data-lang-block="en">
+        25+ years in insurance. Co-founder of Absanet.<br>
+        BA in Business Administration (UBA) · MBA (UDESA).<br>
+        Bridging business and technology to transform<br>the insurance industry.
+      </span>
+    </p>
+
+    <div class="section-label">
+      <span data-lang="es">Soluciones</span>
+      <span data-lang="en">Solutions</span>
+    </div>
+
+    <div class="services">
+      <div class="svc">
+        <div class="svc-name">AbsaNet Core</div>
+        <div class="svc-desc">
+          <span data-lang-block="es">Gestión integral para brokers: cartera, pólizas, siniestros y comisiones.</span>
+          <span data-lang-block="en">End-to-end broker platform: portfolio, policies, claims and commissions.</span>
+        </div>
+      </div>
+      <div class="svc">
+        <div class="svc-name">APIs &amp; Integraciones</div>
+        <div class="svc-desc">
+          <span data-lang-block="es">Conexión con Zurich, Allianz, Mapfre y APIs abiertas para sistemas externos.</span>
+          <span data-lang-block="en">Connected to Zurich, Allianz, Mapfre with open APIs for external systems.</span>
+        </div>
+      </div>
+      <div class="svc wide">
+        <div class="svc-name">Inframe</div>
+        <div class="svc-desc">
+          <span data-lang-block="es">Cotizador B2C embebible con gestión de leads para venta y campañas digitales.</span>
+          <span data-lang-block="en">Embeddable B2C quoting tool with lead management for digital sales &amp; campaigns.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-email" onclick="copyEmail()">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+        <span data-lang="es">Copiar email</span>
+        <span data-lang="en">Copy email</span>
+      </button>
+
+      <a class="btn btn-li" href="https://www.linkedin.com/in/jonathanlew/?locale=es_ES" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+          <rect x="2" y="9" width="4" height="12"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var lang = 'es';
+
+  function toggleLang() {
+    lang = lang === 'es' ? 'en' : 'es';
+    document.body.className = lang + '-show';
+    document.getElementById('langBtn').textContent = lang === 'es' ? 'EN' : 'ES';
+  }
+
+  function copyEmail() {
+    var email = 'jonathan.lew@absanet.com';
+    var msg = lang === 'es' ? '✓ Email copiado al portapapeles' : '✓ Email copied to clipboard';
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email).then(function() { showToast(msg); });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = email;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(msg);
+    }
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2200);
+  }
+</script>
+
+</body>
+</html>
